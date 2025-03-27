@@ -32,3 +32,30 @@ To test and run the project, after installing the required NuGet packages, you n
     "Sample_DB": "Initial Catalog=Sample_DB;Trusted_Connection=false;Trust Server Certificate=True;Data Source=DESKTOP-8RLOL7H;User Id=sa;Password=123"
   },
 ```
+
+After changing the connection string, run the project to register the first user in the database as an admin. This user will be registered as seed data.
+
+```csharp
+
+        private static async Task AppendSuperUser(SampleDataBase sampleDBContext, GeneralSettings generalSettings)
+        {
+            var count = sampleDBContext.Users.Count();
+
+            if (count == 0)
+            {
+                var password = ("Test@%123Admin").GetHashPassword(generalSettings.Salt);
+
+                var user = new User(Guid.NewGuid(),
+                             UserRole.Admin,
+                             "RezaTaslimi",
+                             password,
+                             "Reza Taslimi");
+
+                sampleDBContext.Users.Add(user);
+
+                await sampleDBContext.SaveChangesAsync();
+            }
+        }
+
+```
+
